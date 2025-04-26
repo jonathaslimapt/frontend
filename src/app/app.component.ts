@@ -1,12 +1,16 @@
-import { Component } from '@angular/core';
+import {Component, inject, signal, ViewChild} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {SubmitFileComponent} from './submit-file/submit-file.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, SubmitFileComponent],
   templateUrl: './app.component.html',
+  standalone: true,
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'rag-io';
+
+  @ViewChild(SubmitFileComponent) submitcomponent?: SubmitFileComponent;
 }
