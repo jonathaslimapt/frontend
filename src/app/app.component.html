@@ -13,32 +13,65 @@
   <section class="bg-blue-100 text-center py-20 px-4">
     <h1 class="text-4xl font-bold mb-4">Welcome to Spring AI - Rag</h1>
     <p class="text-lg mb-6">Augmented solution files</p>
-    <button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700" (click)="submitcomponent?.openDialog()" >
+    <button class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700" (click)="openDialog()" >
       Submit your file
     </button>
+
+
   </section>
 
-  <!-- Features -->
-  <section class="grid md:grid-cols-3 gap-8 p-10 bg-white">
-    <div class="text-center">
-      <h3 class="text-xl font-semibold mb-2">Rápido</h3>
-      <p>Desempenho otimizado com Angular.</p>
-    </div>
-    <div class="text-center">
-      <h3 class="text-xl font-semibold mb-2">Seguro</h3>
-      <p>Autenticação e controle de acesso.</p>
-    </div>
-    <div class="text-center">
-      <h3 class="text-xl font-semibold mb-2">Intuitivo</h3>
-      <p>Interface fácil de usar e responsiva.</p>
-    </div>
-  </section>
+  <form class="p-4 md:p-5" [formGroup]="formQuestion" (ngSubmit)="onSubmit()">
+    <!-- Features -->
+    <section class="grid md:grid-cols-1 gap-8 p-10 bg-white">
+      <div class="text-center">
+        <label for="large-input" class="block mb-2 text-sm font-medium text-gray-950">
+          @if (fileName() || files){
+            Ask to .. {{fileName()}}
+
+            <input type="text" id="large-input" formControlName="question"
+                   class="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+
+
+            <div class="text-center">
+              <button type="submit"
+                      class="text-white
+              inline-flex
+              items-center
+              bg-blue-700
+              hover:bg-blue-800
+              focus:ring-4
+              focus:outline-none
+              focus:ring-blue-300
+              font-medium rounded-lg text-sm px-5 py-2.5 text-center
+              dark:bg-blue-600
+              dark:hover:bg-blue-700
+              dark:focus:ring-blue-800">
+
+
+                Go ahead ..
+              </button>
+            </div>
+          }
+
+
+        </label>
+
+      </div>
+    </section>
+
+    @if (result){
+
+      {{result.response}}
+    }
+
+
+  </form>
 
   <!-- Footer -->
   <footer class="mt-auto bg-gray-100 text-center p-4 text-sm text-gray-600">
-    © 2025 MinhaApp. Todos os direitos reservados.
+    © 2025 rag-jon-io. Todos os direitos reservados.
   </footer>
 </div>
 
-<app-submit-file></app-submit-file>
+
 <router-outlet />
