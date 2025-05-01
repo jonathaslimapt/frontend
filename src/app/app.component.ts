@@ -7,6 +7,7 @@ import {FileServiceService} from './service/file-service.service';
 import {SignalFileService} from './service/signal-file-service';
 import {ResultQuestion} from './share/ResultQuestion';
 import {SignalQuestionService} from './service/signal-question-service';
+import {DocumentInfo} from './share/DocumentInfo';
 
 
 @Component({
@@ -23,12 +24,15 @@ export class AppComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   readonly file = signal('');
   fileName: Signal<any>;
-  files: ResourceRef<boolean | undefined> | undefined;
+  resultQuestion: Signal<any>;
+  documentInfos: DocumentInfo[] = [];
+
 
   formQuestion: FormGroup<{ question: FormControl<null> }>;
    result: ResultQuestion = {
     question: '', response: ''
   }
+  protected files: ResourceRef<DocumentInfo | undefined> | undefined;
 
   constructor(private signalService: SignalFileService,
               private signalQuestionService: SignalQuestionService) {
@@ -37,6 +41,7 @@ export class AppComponent implements OnInit {
     })
 
     this.fileName = signalService.getSignal();
+    this.resultQuestion = signalQuestionService.getSignal();
   }
   openDialog(): void {
     const dialogRef = this.dialog.open(SubmitFileComponent, {
@@ -53,16 +58,17 @@ export class AppComponent implements OnInit {
 
   onSubmit() {
     var question = this.formQuestion.get('question')?.value
-    console.log(question)
 
-    this.result.question = question || '';
-    this.result.response = this.fileService.rag(question).toString() || '';
+    this.resultQuestion = this.signalQuestionService.getSignal();
+    this.formQuestion.reset();
 
-    this.signalQuestionService.setSignal(this.result);
     return this.fileService.rag(question);
   }
 
   ngOnInit(): void {
-     this.files = this.fileService.filesResource;
+
+    this.fileService.getDocumentInfo();
+    this.fileName = this.signalService.getSignal();
+
   }
 }

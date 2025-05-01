@@ -1,5 +1,9 @@
-import {computed, inject, Injectable, resource} from '@angular/core';
+import {computed, inject, Injectable, resource, ResourceRef, signal} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {DocumentInfo} from '../share/DocumentInfo';
+import {SignalFileService} from './signal-file-service';
+import {SignalQuestionService} from './signal-question-service';
+import {ResultQuestion} from '../share/ResultQuestion';
 
 @Injectable({
   providedIn: 'root'
@@ -7,17 +11,22 @@ import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 export class FileServiceService {
 
   private readonly http: HttpClient = inject(HttpClient);
-  resultQuestion = [];
+  resultQuestion: ResultQuestion | any;
+  documentInfo: DocumentInfo[] | any;
 
-  constructor() { }
+  constructor(private signalService: SignalFileService, private signalQuestion: SignalQuestionService) { }
 
-  public filesResource = resource({
-    loader: async () => {
-      const res = await fetch('http://localhost:8080/ai/files');
-      return await (res.json() as Promise<boolean>);
-    }
-  })
-  public files = computed( () => this.filesResource.value() || [] );
+  // @ts-ignore
+  getDocumentInfo(): DocumentInfo[] {
+    this.http.get<any>("http://localhost:8080/ai/files", {responseType: "text" as 'json'}).subscribe(
+      (result: any) => {
+        this.documentInfo = JSON.parse(result);
+
+        this.signalService.setSignal(this.documentInfo[0].metadata.file_name);
+      },
+    );
+  }
+
 
   save(file: File) {
 
@@ -35,14 +44,21 @@ export class FileServiceService {
 
   rag(question: any){
 
+    const resultQuestion: ResultQuestion = {
+      response: "",
+      question: ""
+    };
+
     const params = new HttpParams().set('query', question);
     this.http.get<any>("http://localhost:8080/ai/rag", {params, responseType: "text" as 'json'}).subscribe(
       (result: any) => {
-        this.resultQuestion = result;
+        resultQuestion.response = result;
+        resultQuestion.question = question;
+
+        this.signalQuestion.setSignal(resultQuestion);
         },
     );
 
-    console.log(this.resultQuestion);
     return this.resultQuestion;
   }
 
