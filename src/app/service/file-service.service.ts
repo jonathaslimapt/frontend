@@ -1,8 +1,8 @@
 import {computed, inject, Injectable, resource, ResourceRef, signal} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {DocumentInfo} from '../share/DocumentInfo';
-import {SignalFileService} from './signal-file-service';
-import {SignalQuestionService} from './signal-question-service';
+import {SignalFileService} from '../factory/signal-file-service';
+import {SignalQuestionService} from '../factory/signal-question-service';
 import {ResultQuestion} from '../share/ResultQuestion';
 
 @Injectable({

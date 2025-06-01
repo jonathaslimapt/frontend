@@ -4,9 +4,9 @@ import {MatDialog} from '@angular/material/dialog';
 import {SubmitFileComponent} from './submit-file/submit-file.component';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {FileServiceService} from './service/file-service.service';
-import {SignalFileService} from './service/signal-file-service';
+import {SignalFileService} from './factory/signal-file-service';
 import {ResultQuestion} from './share/ResultQuestion';
-import {SignalQuestionService} from './service/signal-question-service';
+import {SignalQuestionService} from './factory/signal-question-service';
 import {DocumentInfo} from './share/DocumentInfo';
 
 
@@ -23,26 +23,27 @@ export class AppComponent implements OnInit {
   private readonly fileService = inject(FileServiceService);
   readonly dialog = inject(MatDialog);
   readonly file = signal('');
-  fileName: Signal<any>;
-  resultQuestion: Signal<any>;
-  documentInfos: DocumentInfo[] = [];
-
+  fileName!: Signal<string>;
+  resultQuestion!: Signal<ResultQuestion>;
 
   formQuestion: FormGroup<{ question: FormControl<null> }>;
-   result: ResultQuestion = {
-    question: '', response: ''
-  }
-  protected files: ResourceRef<DocumentInfo | undefined> | undefined;
 
-  constructor(private signalService: SignalFileService,
+  constructor(private signalFileService: SignalFileService,
               private signalQuestionService: SignalQuestionService) {
+
     this.formQuestion = new FormGroup({
       question: new FormControl(null, Validators.required)
     })
 
-    this.fileName = signalService.getSignal();
-    this.resultQuestion = signalQuestionService.getSignal();
+
   }
+
+  ngOnInit(): void {
+    this.fileName = this.signalFileService.getSignal();
+    this.resultQuestion = this.signalQuestionService.getSignal();
+    this.fileService.getDocumentInfo();
+  }
+  
   openDialog(): void {
     const dialogRef = this.dialog.open(SubmitFileComponent, {
       data: {name: this.file}
@@ -57,18 +58,9 @@ export class AppComponent implements OnInit {
   }
 
   onSubmit() {
-    var question = this.formQuestion.get('question')?.value
-
-    this.resultQuestion = this.signalQuestionService.getSignal();
     this.formQuestion.reset();
-
-    return this.fileService.rag(question);
+    return this.fileService.rag(this.formQuestion.get('question')?.value);
   }
 
-  ngOnInit(): void {
 
-    this.fileService.getDocumentInfo();
-    this.fileName = this.signalService.getSignal();
-
-  }
 }

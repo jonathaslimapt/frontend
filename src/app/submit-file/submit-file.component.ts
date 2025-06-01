@@ -8,7 +8,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {FileServiceService} from '../service/file-service.service';
 import {of} from 'rxjs';
-import {SignalFileService} from '../service/signal-file-service';
+import {SignalFileService} from '../factory/signal-file-service';
 
 
 @Component({
@@ -23,18 +23,13 @@ import {SignalFileService} from '../service/signal-file-service';
 })
 export class SubmitFileComponent {
 
-  private readonly fileService = inject(FileServiceService);
   readonly dialogRef = inject(MatDialogRef<SubmitFileComponent>);
 
   readonly file = signal('');
-  readonly dialog = inject(MatDialog);
   formFields: FormGroup;
   selectedfile: File | null = null;
-  fileName = signal('');
 
-
-
-  constructor(private signalService: SignalFileService) {
+  constructor(private readonly signalFileService: SignalFileService, private readonly fileService: FileServiceService) {
     this.formFields = new FormGroup({
         file: new FormControl(null, Validators.required)
     })
@@ -55,7 +50,7 @@ export class SubmitFileComponent {
       this.fileService.save(this.selectedfile).subscribe({
         next: (data) => {
           console.log('Data received:', data);
-          this.signalService.setSignal(this.formFields.get('file')?.value);
+          this.signalFileService.setSignal(this.formFields.get('file')?.value);
           this.onNoClick();
         },
         error: (error) => {
