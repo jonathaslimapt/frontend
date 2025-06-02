@@ -25,10 +25,7 @@
     <section class="grid md:grid-cols-1 gap-8 p-10 bg-white">
       <div class="text-center">
         <label for="large-input" class="block mb-2 text-sm font-medium text-gray-950">
-          @if (fileName()){
-            <p class="text-gray-500 dark:text-gray-400">
-              <b>Ask to : </b> {{fileName()}}
-            </p>
+
 
 
             <br/>
@@ -55,7 +52,7 @@
                 Go ahead ..
               </button>
             </div>
-          }
+
 
 
         </label>
@@ -76,6 +73,7 @@
 
         {{resultQuestion().response}}
       }
+
     </p>
 
 

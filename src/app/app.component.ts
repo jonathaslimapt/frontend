@@ -12,7 +12,7 @@ import {DocumentInfo} from './share/DocumentInfo';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SubmitFileComponent, ReactiveFormsModule],
+  imports: [RouterOutlet, ReactiveFormsModule],
   templateUrl: './app.component.html',
   standalone: true,
   styleUrl: './app.component.css'
@@ -39,11 +39,11 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fileName = this.signalFileService.getSignal();
+
     this.resultQuestion = this.signalQuestionService.getSignal();
     this.fileService.getDocumentInfo();
   }
-  
+
   openDialog(): void {
     const dialogRef = this.dialog.open(SubmitFileComponent, {
       data: {name: this.file}
@@ -58,8 +58,10 @@ export class AppComponent implements OnInit {
   }
 
   onSubmit() {
-    this.formQuestion.reset();
-    return this.fileService.rag(this.formQuestion.get('question')?.value);
+    this.fileService.rag(this.formQuestion.get('question')?.value);
+
+    this.fileName = this.signalFileService.getSignal();
+    this.resultQuestion = this.signalQuestionService.getSignal();
   }
 
 

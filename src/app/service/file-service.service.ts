@@ -50,10 +50,12 @@ export class FileServiceService {
     };
 
     const params = new HttpParams().set('query', question);
-    this.http.get<any>("http://localhost:8080/ai/rag", {params, responseType: "text" as 'json'}).subscribe(
+    this.http.get<any>("http://localhost:8080/ai", {params}).subscribe(
       (result: any) => {
-        resultQuestion.response = result;
-        resultQuestion.question = question;
+
+        console.log(result.answer);
+        resultQuestion.response = result.answer;
+        resultQuestion.question = result.prompt;
 
         this.signalQuestion.setSignal(resultQuestion);
         },
